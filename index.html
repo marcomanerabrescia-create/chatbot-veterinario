@@ -3,433 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo WhatsApp Bot - Studio Veterinario</title>
+    <title>Studio Veterinario Bianchi - Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0px); }
+            40%, 43% { transform: translateY(-10px); }
+            70% { transform: translateY(-5px); }
+            90% { transform: translateY(-2px); }
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #e5ddd5;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .whatsapp-container {
-            max-width: 400px;
-            width: 100%;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .whatsapp-header {
-            background: #25d366;
-            color: white;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .contact-avatar {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .contact-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .contact-info p {
-            font-size: 12px;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .chat-area {
-            height: 500px;
-            overflow-y: auto;
-            padding: 16px;
-            background: #e5ddd5;
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20c0 20-8.02 20-20 20s20-8.02 20-20S31.98 0 20 0 0 8.02 0 20z'/%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .message {
-            margin-bottom: 12px;
-            display: flex;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message.received {
-            justify-content: flex-start;
-        }
-
-        .message.sent {
-            justify-content: flex-end;
-        }
-
-        .message-bubble {
-            max-width: 80%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.4;
-            position: relative;
-        }
-
-        .message.received .message-bubble {
-            background: white;
-            color: #303030;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .message.sent .message-bubble {
-            background: #dcf8c6;
-            color: #303030;
-        }
-
-        .message-time {
-            font-size: 11px;
-            opacity: 0.7;
-            margin-top: 4px;
-            text-align: right;
-        }
-
-        .typing-indicator {
-            display: none;
-            padding: 8px 12px;
-            background: white;
-            border-radius: 8px;
-            max-width: 80px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 3px;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: #999;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { opacity: 0.3; }
-            30% { opacity: 1; }
-        }
-
-        .input-section {
-            background: #f0f0f0;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .message-input {
-            flex: 1;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 10px 16px;
-            color: #303030;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .message-input::placeholder {
-            color: #999;
-        }
-
-        .send-button {
-            width: 40px;
-            height: 40px;
-            background: #25d366;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .send-button:hover {
-            background: #20b358;
-        }
-
-        .emergency-button {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(255,0,0,0.3);
-            animation: pulse 2s infinite;
-            z-index: 1000;
-        }
-
-        .emergency-button:hover {
-            background: #cc0000;
-        }
-
+        .animate-bounce { animation: bounce 1s infinite; }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse {
-            0% { box-shadow: 0 2px 10px rgba(255,0,0,0.3); }
-            50% { box-shadow: 0 2px 15px rgba(255,0,0,0.6); }
-            100% { box-shadow: 0 2px 10px rgba(255,0,0,0.3); }
-        }
-
-        .demo-label {
-            text-align: center;
-            color: #25d366;
-            font-weight: bold;
-            padding: 8px;
-            background: white;
-            font-size: 12px;
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
         }
     </style>
 </head>
-<body>
-    <div class="whatsapp-container">
-        <div class="demo-label">📱 DEMO - Come appare su WhatsApp</div>
-        
-        <div class="whatsapp-header">
-            <div class="contact-avatar">🐕</div>
-            <div class="contact-info">
-                <h3>Studio Veterinario Bianchi</h3>
-                <p>online</p>
-            </div>
-        </div>
-
-        <div class="chat-area" id="chatArea">
-            <div class="message received">
-                <div class="message-bubble">
-                    <div>Ciao! Sono l'assistente dello Studio Veterinario Bianchi. Come posso aiutarti oggi?</div>
-                    <div class="message-time" id="initialTime"></div>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white rounded-full p-2">
+                    <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.222 19.778a4.5 4.5 0 001.423-2.765L5 15.5c0-1.036.84-1.875 1.875-1.875S8.75 14.464 8.75 15.5s-.84 1.875-1.875 1.875c-1.035 0-1.875.84-1.875 1.875zM15 11.25c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5-2.015 4.5-4.5 4.5-4.5-2.015-4.5-4.5z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">Studio Veterinario Bianchi</h3>
+                    <p class="text-green-100 text-sm flex items-center">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        Online • La salute del tuo amico!
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="typing-indicator" id="typingIndicator">
-            <div class="typing-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="h-96 overflow-y-auto p-4 space-y-4 bg-green-50">
+            <div class="flex justify-start">
+                <div class="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white text-black shadow-md border border-green-200 rounded-bl-md">
+                    <div class="whitespace-pre-line text-sm leading-relaxed font-semibold">🩺 Ciao! Sono l'assistente dello Studio Veterinario Bianchi. Benvenuto! Clicca su uno dei pulsanti qui sotto per le informazioni che ti servono! 🐾</div>
+                    <div class="text-xs opacity-60 font-medium mt-2" id="initialTime"></div>
+                </div>
             </div>
         </div>
 
-        <div class="input-section">
-            <button class="emergency-button" onclick="startEmergency()">Emergenza</button>
-            <input type="text" class="message-input" id="messageInput" placeholder="Scrivi un messaggio..." onkeypress="handleKeyPress(event)">
-            <button class="send-button" onclick="sendMessage()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        <!-- Quick Replies -->
+        <div class="p-4 bg-white border-t border-green-200">
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Bottone urgente centrato -->
+                <div class="col-span-2 flex justify-center">
+                    <button onclick="handleQuickReply('urgente')" class="bg-orange-500 text-white border-orange-500 text-sm py-2 px-4 rounded-xl font-semibold w-1/2">
+                        URGENTE
+                    </button>
+                </div>
+                
+                <!-- Altri bottoni -->
+                <button onclick="handleQuickReply('orari')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    🕐 Orari
+                </button>
+                <button onclick="handleQuickReply('prezzi')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    💰 Prezzi
+                </button>
+                <button onclick="handleQuickReply('dove')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    📍 Dove siamo
+                </button>
+                <button onclick="handleQuickReply('prenotazione')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    📞 Prenotazioni
+                </button>
+                <button onclick="handleQuickReply('servizi')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    🩺 Servizi
+                </button>
+                <button onclick="handleQuickReply('preparazione')" class="bg-green-50 hover:bg-green-100 text-black hover:text-green-800 border-green-200 hover:border-green-300 text-sm py-3 px-4 rounded-xl border transition-all hover:scale-105 active:scale-95 font-semibold shadow-sm hover:shadow-md">
+                    📋 Come preparare
+                </button>
+            </div>
+            <p class="text-xs text-gray-600 mt-4 text-center flex items-center justify-center font-medium">
+                <svg class="w-3 h-3 text-green-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
                 </svg>
-            </button>
+                Per emergenze usa sempre il bottone URGENTE!
+            </p>
         </div>
     </div>
 
     <script>
-        let currentFlow = 'main';
-        let userData = {};
+        // Imposta il timestamp iniziale
+        document.getElementById('initialTime').textContent = new Date().toLocaleTimeString('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
 
-        // Inizializza tempo
-        document.getElementById('initialTime').textContent = getCurrentTime();
+        // Risposte del bot
+        const botResponses = {
+            urgente: "🚨 **EMERGENZE 24/7:**\n\n📞 **CHIAMA SUBITO:** 030-123456\n📱 **WhatsApp Urgenze:** 347-987654\n\n⚠️ **SINTOMI GRAVI:**\n• Difficoltà respiratorie\n• Convulsioni\n• Trauma/incidenti\n• Avvelenamento\n• Emorragie\n\n🏥 **PRONTO SOCCORSO:**\nVia Roma 15, Brescia\nAperto 24h/7giorni\n\n💡 Per emergenze vere CHIAMA, non scrivere!",
+            orari: "🕐 **ORARI VISITE:**\n\n📅 **Lunedì - Venerdì:** 8:30 - 19:00\n📅 **Sabato:** 8:30 - 13:00\n📅 **Domenica:** CHIUSI\n\n⏰ **Orari specifici:**\n• Visite: 9:00 - 18:00\n• Chirurgie: 14:00 - 17:00\n• Emergenze: 24/7\n\n💡 Solo su appuntamento (tranne emergenze)",
+            prezzi: "💰 **LISTINO PREZZI:**\n\n🐕 **CANI:**\n• Prima visita: 45€\n• Visita controllo: 35€\n• Vaccini: 25-35€\n• Sterilizzazione: 180-250€\n\n🐱 **GATTI:**\n• Prima visita: 40€\n• Visita controllo: 30€\n• Vaccini: 25-30€\n• Sterilizzazione: 120-180€\n\n🔬 **ESAMI:**\n• Analisi sangue: 35-60€\n• Radiografie: 45-80€\n• Ecografie: 60-90€\n\n*Prezzi indicativi",
+            dove: "📍 **STUDIO VETERINARIO BIANCHI:**\n\n🏥 Via Giuseppe Verdi 42, 25100 Brescia\n🅿️ Parcheggio gratuito interno\n🚌 Fermata bus linea 12 a 50m\n🚗 Uscita A4 Brescia Est (5 min)\n\n🏪 Zona centro, vicino Poste Italiane\n🗺️ GPS: 45.5416, 10.2118\n\n📱 Su Google Maps cerca:\n\"Studio Veterinario Bianchi Brescia\"",
+            prenotazione: "📞 **PRENOTAZIONI:**\n\n☎️ **Telefono:** 030-123456\n📱 **WhatsApp:** 347-987654\n⏰ **Orari segreteria:** Lun-Ven 8:30-19:00, Sab 8:30-13:00\n\n💻 **ONLINE:**\nwww.veterinariobianchi.it/prenota\n\n⚠️ **IMPORTANTE:**\n• Prenotazione obbligatoria\n• Confermare 24h prima\n• Portare libretto sanitario\n• Per urgenze chiamare sempre\n\n🐾 Prime visite: prenotare con almeno 3 giorni",
+            servizi: "🩺 **I NOSTRI SERVIZI:**\n\n🔍 **VISITE & DIAGNOSI:**\n• Visite cliniche complete\n• Check-up geriatrici\n• Consulenze comportamentali\n• Medicina preventiva\n\n💉 **PREVENZIONE:**\n• Vaccinazioni cani/gatti\n• Trattamenti antiparassitari\n• Profilassi dentale\n• Microchip\n\n🏥 **CHIRURGIA:**\n• Sterilizzazioni\n• Chirurgia generale\n• Odontoiatria\n• Ortopedia base\n\n🔬 **DIAGNOSTICA:**\n• Radiologie digitali\n• Ecografie\n• Analisi laboratorio\n• Esami cardiologici",
+            preparazione: "📋 **COME PREPARARE L'ANIMALE:**\n\n✅ **COSA PORTARE:**\n• Libretto sanitario/passaporto\n• Documento d'identità proprietario\n• Lista farmaci attuali\n• Campioni feci/urine (se richiesti)\n\n⏰ **PRIMA DELLA VISITA:**\n• Per analisi sangue: digiuno 12h\n• Per ecografie: digiuno 8h\n• Per visite normali: pasto leggero ok\n\n🐕 **PREPARAZIONE ANIMALE:**\n• Guinzaglio per cani\n• Trasportino per gatti\n• Mantenere calmo l'animale\n• Non dare tranquillanti fai-da-te\n\n📝 **PRIMA VISITA:**\nPortare tutta la documentazione sanitaria precedente"
+        };
 
-        function getCurrentTime() {
-            return new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-        }
+        const quickReplies = {
+            urgente: "URGENTE",
+            orari: "🕐 Orari",
+            prezzi: "💰 Prezzi", 
+            dove: "📍 Dove siamo",
+            prenotazione: "📞 Prenotazioni",
+            servizi: "🩺 Servizi",
+            preparazione: "📋 Come preparare"
+        };
 
-        function addMessage(text, type) {
-            const chatArea = document.getElementById('chatArea');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
+        function handleQuickReply(key) {
+            const chatMessages = document.getElementById('chatMessages');
+            const response = botResponses[key];
+            const buttonText = quickReplies[key];
             
-            messageDiv.innerHTML = `
-                <div class="message-bubble">
-                    <div style="white-space: pre-line">${text}</div>
-                    <div class="message-time">${getCurrentTime()}</div>
-                </div>
-            `;
-            
-            chatArea.appendChild(messageDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
+            if (response) {
+                // Aggiungi messaggio utente
+                const userMessage = document.createElement('div');
+                userMessage.className = 'flex justify-end';
+                userMessage.innerHTML = `
+                    <div class="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-green-500 text-white rounded-br-md shadow-lg">
+                        <div class="whitespace-pre-line text-sm leading-relaxed font-medium">${buttonText}</div>
+                        <div class="text-xs opacity-70 mt-2">${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessage);
 
-        function showTyping() {
-            const indicator = document.getElementById('typingIndicator');
-            indicator.style.display = 'block';
-            const chatArea = document.getElementById('chatArea');
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
+                // Mostra indicatore di digitazione
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'flex justify-start';
+                typingIndicator.id = 'typing';
+                typingIndicator.innerHTML = `
+                    <div class="bg-white text-black shadow-md border border-green-200 px-4 py-3 rounded-2xl rounded-bl-md">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        function hideTyping() {
-            document.getElementById('typingIndicator').style.display = 'none';
-        }
-
-        function sendBotMessage(text) {
-            showTyping();
-            setTimeout(() => {
-                hideTyping();
-                addMessage(text, 'received');
-            }, 1000 + Math.random() * 1000);
-        }
-
-        function processMessage(message) {
-            const lower = message.toLowerCase();
-
-            if (lower.includes('prenotazione') || lower.includes('prenotare') || lower.includes('appuntamento') || lower.includes('prenota')) {
-                currentFlow = 'booking_type';
-                sendBotMessage("Ciao! È un'emergenza o una visita di controllo?");
-            }
-            else if (currentFlow === 'booking_type') {
-                if (lower.includes('emergenza') || lower.includes('urgente')) {
-                    currentFlow = 'emergency';
-                    userData = {};
-                    sendBotMessage("🚨 EMERGENZA ATTIVATA!\n\nPer primo, condividi la tua posizione.\nScrivi dove ti trovi ora (es: Via Roma 45, Roma)");
-                } else {
-                    currentFlow = 'booking';
-                    userData = {};
-                    sendBotMessage("Perfetto! Come ti chiami?");
-                }
-            }
-            else if (lower.includes('orari') || lower.includes('aperto') || lower.includes('chiuso')) {
-                sendBotMessage("🕐 I nostri orari sono:\n\n• Lunedì-Venerdì: 9:00-19:00\n• Sabato: 9:00-13:00\n• Domenica: Chiuso\n\n📞 Per emergenze: 339-1234567");
-            }
-            else if (lower.includes('emergenza') || lower.includes('urgente') || lower.includes('male') || lower.includes('aiuto')) {
-                currentFlow = 'emergency';
-                userData = {};
-                sendBotMessage("🚨 EMERGENZA ATTIVATA!\n\nPer primo, condividi la tua posizione.\nScrivi dove ti trovi ora (es: Via Roma 45, Roma)");
-            }
-            else if (lower.includes('prezzo') || lower.includes('costo') || lower.includes('quanto')) {
-                sendBotMessage("💰 Ecco i nostri prezzi indicativi:\n\n• Visita di controllo: €35\n• Vaccinazioni: €25-45\n• Microchip: €25\n• Sterilizzazione: €180-350\n\nI prezzi possono variare. Vuoi prenotare una visita?");
-            }
-            else if (lower.includes('telefono') || lower.includes('chiamare') || lower.includes('numero')) {
-                sendBotMessage("📞 I nostri contatti:\n\n• Studio: 06-12345678\n• Emergenze: 339-1234567\n• WhatsApp: 339-1234567\n📍 Via Roma 123, Roma\n\nPuoi chiamare negli orari di apertura!");
-            }
-            else if (lower.includes('vaccino') || lower.includes('vaccinazione')) {
-                sendBotMessage("💉 Info Vaccinazioni:\n\n🐕 Cani: Prima dose a 8 settimane, richiami annuali\n🐱 Gatti: Prima dose a 9 settimane, richiami annuali\n\n📋 Porta sempre il libretto sanitario!\n\nVuoi prenotare la vaccinazione?");
-            }
-            else if (currentFlow === 'booking') {
-                if (!userData.name) {
-                    userData.name = message;
-                    sendBotMessage(`Ciao ${message}! Che animale hai e come si chiama?`);
-                } else if (!userData.pet) {
-                    userData.pet = message;
-                    sendBotMessage("Perfetto! In che giorni della settimana puoi venire?\n(es: lunedì, mercoledì, venerdì)");
-                } else if (!userData.days) {
-                    userData.days = message;
-                    sendBotMessage("Ottimo! In che orari preferisci?\n(es: mattina 9-12, pomeriggio 14-18)");
-                } else {
-                    sendBotMessage(`✅ Richiesta registrata!\n\n👤 ${userData.name}\n🐕 ${userData.pet}\n📅 ${userData.days}\n🕐 ${message}\n\nTi ricontattiamo noi per confermare l'appuntamento.\n\n📞 Per urgenze: 339-1234567`);
-                    currentFlow = 'main';
-                    userData = {};
-                }
-            }
-            else if (currentFlow === 'emergency') {
-                if (!userData.name && !userData.location) {
-                    userData.location = message;
-                    sendBotMessage("Perfetto! Ora dimmi:\n\n📝 Il tuo nome\n📞 Il tuo telefono\n⚠️ Cosa è successo\n\nPuoi scrivere tutto insieme separato da virgole.");
-                } else if (!userData.name) {
-                    // Analizza la risposta (nome, telefono, problema)
-                    const parts = message.split(',').map(p => p.trim());
-                    userData.name = parts[0] || 'Non specificato';
-                    userData.phone = parts[1] || 'Non specificato';
-                    userData.problem = parts.slice(2).join(', ') || 'Non specificato';
+                // Rimuovi indicatore e aggiungi risposta dopo 1.5 secondi
+                setTimeout(() => {
+                    chatMessages.removeChild(typingIndicator);
                     
-                    // Simula invio SMS
-                    console.log(`
-SMS INVIATO A: +39 3486374897
-🚨 EMERGENZA STUDIO BIANCHI
-
-Cliente: ${userData.name}
-Tel: ${userData.phone}
-Posizione: ${userData.location}
-Problema: ${userData.problem}
-Ora: ${getCurrentTime()} - ${new Date().toLocaleDateString('it-IT')}
-
-RICHIAMARE SUBITO + RAGGIUNGERE
-                    `);
-                    
-                    // Simula chiamata dopo 3 minuti
-                    setTimeout(() => {
-                        console.log(`
-CHIAMATA VOCALE AUTOMATICA DOPO 3 MINUTI
-A: +39 3486374897
-MESSAGGIO: "Emergenza Studio Bianchi. Cliente ${userData.name} in ${userData.location}. Problema: ${userData.problem}. Richiamare subito."
-                        `);
-                    }, 180000);
-                    
-                    sendBotMessage(`🚨 Emergenza registrata!\n\n✅ SMS immediato inviato\n📞 Chiamata dopo 3 minuti\n📍 Posizione: ${userData.location}\n👤 ${userData.name}\n📞 ${userData.phone}\n⚠️ ${userData.problem}\n\nTieniti pronto, ti ricontattiamo subito!`);
-                    currentFlow = 'main';
-                    userData = {};
-                }
-            }
-            else if (lower.includes('ciao') || lower.includes('salve') || lower.includes('buongiorno')) {
-                sendBotMessage("Ciao! Sono l'assistente dello Studio Veterinario Bianchi. Come posso aiutarti oggi?\n\n🩺 Prenotare visite\n⏰ Orari e info\n🚨 Emergenze\n💰 Prezzi\n💉 Vaccinazioni\n📞 Contatti");
-            }
-            else {
-                sendBotMessage("Non ho capito bene. Posso aiutarti con:\n\n🩺 Prenotare visite\n⏰ Orari e info\n🚨 Emergenze\n💰 Prezzi\n💉 Vaccinazioni\n📞 Contatti\n\nCosa ti serve?");
-            }
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            
-            if (message) {
-                addMessage(message, 'sent');
-                input.value = '';
-                processMessage(message);
-            }
-        }
-
-        function startEmergency() {
-            addMessage('🚨 EMERGENZA', 'sent');
-            currentFlow = 'emergency';
-            userData = {};
-            sendBotMessage("🚨 EMERGENZA ATTIVATA!\n\nPer primo, condividi la tua posizione.\nScrivi dove ti trovi ora (es: Via Roma 45, Roma)");
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'flex justify-start';
+                    botMessage.innerHTML = `
+                        <div class="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white text-black shadow-md border border-green-200 rounded-bl-md">
+                            <div class="whitespace-pre-line text-sm leading-relaxed font-semibold">${response}</div>
+                            <div class="text-xs opacity-60 font-medium mt-2">${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(botMessage);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1500);
             }
         }
     </script>
