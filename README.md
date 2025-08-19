@@ -1,2 +1,372 @@
-# chatbot-veterinario
-Chatbot per studio veterinario con WhatsApp
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Veterinario Bianchi - Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .header {
+            background: linear-gradient(to right, #059669, #047857);
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #059669;
+        }
+
+        .header-info h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .header-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .chat-area {
+            height: 400px;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f0fdf4;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #374151;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .message.user .message-bubble {
+            background: #10b981;
+            color: white;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .buttons-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #d1d5db;
+        }
+
+        .emergency-button {
+            width: 60%;
+            margin: 0 auto 16px;
+            display: block;
+            background: #f97316;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .emergency-button:hover {
+            background: #ea580c;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quick-button {
+            background: #f0fdf4;
+            color: #047857;
+            border: 1px solid #bbf7d0;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-button:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+
+        .input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #d1d5db;
+            display: flex;
+            gap: 8px;
+        }
+
+        .message-input {
+            flex: 1;
+            border: 1px solid #10b981;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #047857;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            background: #10b981;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .send-button:hover {
+            background: #047857;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbot-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="avatar">🩺</div>
+            <div class="header-info">
+                <h3>Studio Veterinario Bianchi</h3>
+                <p>🟢 Online • Risponde subito</p>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-area" id="chatArea">
+            <div class="message bot">
+                <div class="message-bubble">
+                    🐕 Ciao! Sono l'assistente virtuale dello Studio Veterinario Bianchi. Come posso aiutarti oggi?
+                    <div class="message-time" id="initialTime"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="buttons-area">
+            <button class="emergency-button" onclick="handleQuickReply('emergenza')">
+                🚨 EMERGENZA
+            </button>
+            
+            <div class="buttons-grid">
+                <button class="quick-button" onclick="handleQuickReply('orari')">🕒 Orari</button>
+                <button class="quick-button" onclick="handleQuickReply('prezzi')">💰 Prezzi</button>
+                <button class="quick-button" onclick="handleQuickReply('dove')">📍 Dove siamo</button>
+                <button class="quick-button" onclick="handleQuickReply('prenotazione')">📞 Prenotazioni</button>
+                <button class="quick-button" onclick="handleQuickReply('servizi')">🏥 Servizi</button>
+                <button class="quick-button" onclick="handleQuickReply('preparazione')">📋 Come preparare animale</button>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-area">
+            <input type="text" class="message-input" id="messageInput" placeholder="Scrivi la tua domanda..." onkeypress="handleKeyPress(event)">
+            <button class="send-button" onclick="sendMessage()">
+                ➤
+            </button>
+        </div>
+        
+        <p class="footer-text">💡 Powered by ChatBot Veterinario • Sempre disponibile 24/7</p>
+    </div>
+
+    <script>
+        // Imposta timestamp iniziale
+        document.getElementById('initialTime').textContent = new Date().toLocaleTimeString('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        // Risposte del bot
+        const botResponses = {
+            orari: "🕒 **ORARI DI APERTURA:**\n\n📅 Lunedì - Venerdì: 9:00 - 18:00\n📅 Sabato: 9:00 - 13:00\n📅 Domenica: CHIUSI\n\n⚠️ Per emergenze fuori orario: 339-1234567",
+            prezzi: "💰 **LISTINO PREZZI:**\n\n🔸 Visita generale: 45€\n🔸 Prime vaccinazioni: 35€\n🔸 Richiami annuali: 30€\n🔸 Microchip + iscrizione: 40€\n🔸 Sterilizzazione gatto: 120€\n\n💡 I prezzi possono variare in base al caso specifico.",
+            dove: "📍 **COME RAGGIUNGERCI:**\n\n📮 Via Roma 15, 25100 Brescia\n🅿️ Parcheggio gratuito nel cortile\n🚌 Fermata bus linea 12 a 50 metri\n\n🗺️ Siamo vicino al centro, zona ospedale civile.",
+            prenotazione: "📞 **PRENOTAZIONI:**\n\n☎️ Telefono: 030-123456\n📱 WhatsApp: 339-654321\n⏰ Orari telefono: Lun-Ven 9-18\n\n🚨 Per urgenze scrivici su WhatsApp anche fuori orario!",
+            servizi: "🏥 **I NOSTRI SERVIZI:**\n\n✅ Visite generali e specialistiche\n✅ Vaccinazioni e richiami\n✅ Chirurgia ambulatoriale\n✅ Esami del sangue e urine\n✅ Radiografie\n✅ Dermatologia veterinaria\n✅ Medicina interna",
+            emergenza: "🚨 **EMERGENZA ATTIVATA!**\n\n📍 **SCRIVI IL TUO INDIRIZZO PRECISO** o dammi la posizione e dammi indicazioni (es: vicino alla banca, ultima casa a dx ecc)\n\n⚠️ **DESCRIVI LA PROBLEMATICA** dell'animale\n\nIl veterinario sta per essere allertato!",
+            preparazione: "📋 **COME PREPARARE L'ANIMALE:**\n\n✅ **COSA PORTARE:**\n• Libretto sanitario/passaporto\n• Documento d'identità proprietario\n• Lista farmaci attuali\n• Campioni feci/urine (se richiesti)\n\n⏰ **PRIMA DELLA VISITA:**\n• Per analisi sangue: digiuno 12h\n• Per ecografie: digiuno 8h\n• Per visite normali: pasto leggero ok\n\n🐕 **PREPARAZIONE ANIMALE:**\n• Guinzaglio per cani\n• Trasportino per gatti\n• Mantenere calmo l'animale\n• Non dare tranquillanti fai-da-te"
+        };
+
+        function addMessage(text, isBot) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${text}
+                    <div class="message-time">${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function getBotResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('orari') || message.includes('aperto') || message.includes('chiuso')) {
+                return botResponses.orari;
+            }
+            if (message.includes('prezzo') || message.includes('costa') || message.includes('quanto')) {
+                return botResponses.prezzi;
+            }
+            if (message.includes('dove') || message.includes('indirizzo') || message.includes('posizione')) {
+                return botResponses.dove;
+            }
+            if (message.includes('prenotare') || message.includes('appuntamento') || message.includes('prenoto')) {
+                return botResponses.prenotazione;
+            }
+            if (message.includes('servizi') || message.includes('cosa fate') || message.includes('cure')) {
+                return botResponses.servizi;
+            }
+            if (message.includes('urgente') || message.includes('emergenza') || message.includes('aiuto')) {
+                return botResponses.emergenza;
+            }
+            if (message.includes('preparare') || message.includes('cosa portare') || message.includes('prima volta')) {
+                return botResponses.preparazione;
+            }
+            
+            return "🤔 Non ho capito bene. Usa i pulsanti qui sotto per le informazioni che ti servono!";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, false);
+                input.value = '';
+                
+                setTimeout(() => {
+                    addMessage(getBotResponse(message), true);
+                }, 1000);
+            }
+        }
+
+        function handleQuickReply(key) {
+            // SMS e notifica se è emergenza
+            if (key === 'emergenza') {
+                setTimeout(() => {
+                    addMessage("✅ SMS inviato al veterinario!\n📞 Seguirà chiamata se urgente", true);
+                }, 1500);
+                
+                setTimeout(() => {
+                    addMessage("📞 Chiamata automatica inviata", true);
+                }, 180000);
+            }
+            
+            const buttonTexts = {
+                orari: "🕒 Orari",
+                prezzi: "💰 Prezzi",
+                dove: "📍 Dove siamo", 
+                prenotazione: "📞 Prenotazioni",
+                servizi: "🏥 Servizi",
+                preparazione: "📋 Come preparare animale",
+                emergenza: "🚨 EMERGENZA"
+            };
+            
+            const buttonText = buttonTexts[key];
+            const response = botResponses[key];
+            
+            if (response) {
+                addMessage(buttonText, false);
+                setTimeout(() => {
+                    addMessage(response, true);
+                }, 1000);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
+
