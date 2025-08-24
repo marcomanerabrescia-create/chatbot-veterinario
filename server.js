@@ -51,4 +51,4 @@ const listinoPrezzi = {
 // Messaggi del chatbot
 const messaggi = {
     benvenuto: `🐕 *Ciao! Sono l'assistente dello
-
+Studio Veterinario Bianchi. Come posso aiutarti?`,
