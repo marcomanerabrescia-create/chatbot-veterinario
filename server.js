@@ -1,4 +1,5 @@
-const express = require('express');
+
+ const express = require('express');
 const path = require('path');
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // Servire file statici
 app.use(express.static('.'));
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -50,5 +52,5 @@ const listinoPrezzi = {
 
 // Messaggi del chatbot
 const messaggi = {
-    benvenuto: `🐕 *Ciao! Sono l'assistente dello
-Studio Veterinario Bianchi. Come posso aiutarti?`,
+    benvenuto: `🐕 *Ciao! Sono l'assistente dello Studio Veterinario Bianchi. Come posso aiutarti?*`
+};   
