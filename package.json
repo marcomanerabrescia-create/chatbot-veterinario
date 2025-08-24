@@ -13,15 +13,14 @@
     "chatbot",
     "veterinario",
     "nodejs",
-    "whatsapp-web.js"
+    "twilio"
   ],
   "author": "Studio Veterinario Bianchi",
   "license": "MIT",
   "dependencies": {
-    "whatsapp-web.js": "^1.23.0",
-    "qrcode-terminal": "^0.12.0",
     "express": "^4.18.2",
-    "puppeteer": "^21.0.0"
+    "twilio": "^4.17.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
