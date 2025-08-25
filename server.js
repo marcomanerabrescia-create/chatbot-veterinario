@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
 
+// ✅ AGGIUNTO: Import corretto per MessagingResponse
+const { MessagingResponse } = require('twilio').twiml;
+
 // Configurazione Express
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -109,9 +112,9 @@ function processMessage(message) {
     return `Ciao! 🐕 Posso aiutarti con:\n\n• Orari di apertura\n• Servizi disponibili\n• Prezzi\n• Contatti\n• Prenotazioni\n• Emergenze\n\nCosa ti interessa sapere?`;
 }
 
-// Endpoint per webhook Twilio
+// ✅ CORRETTO: Endpoint per webhook Twilio
 app.post('/webhook', (req, res) => {
-    const twiml = new require('twilio').twiml.MessagingResponse();
+    const twiml = new MessagingResponse();
     const incomingMessage = req.body.Body || '';
     
     const response = processMessage(incomingMessage);
@@ -136,4 +139,3 @@ app.listen(PORT, () => {
     console.log(`📍 Studio: ${studioInfo.nome}`);
     console.log(`🔧 Twilio: ${accountSid && authToken ? 'Configurato' : 'Non configurato'}`);
 });
- 
