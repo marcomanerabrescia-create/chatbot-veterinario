@@ -1,18 +1,4 @@
 {
-  "name": "nuovo-progetto-veterinario",
-  "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^17.2.1",
-    {
   "name": "chatbot-veterinario",
   "version": "1.0.0",
   "description": "Un piccolo chatbot veterinario",
@@ -20,6 +6,8 @@
   "scripts": {
     "start": "node server.js"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "dotenv": "^16.0.3",
@@ -27,6 +15,4 @@
   }
 }
 
-    "express": "^5.1.0"
-  }
-}
+    
