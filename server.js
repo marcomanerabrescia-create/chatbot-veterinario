@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
 const TelegramBot = require('node-telegram-bot-api');
 const app = express();
 
@@ -318,4 +317,6 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
+
 
