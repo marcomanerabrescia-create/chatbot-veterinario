@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Veterinario Bianchi - Assistente Virtuale</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2c5530">
+    <style>
+        /* Tutti gli stili CSS rimangono invariati */
+        /* (Li ho omessi per brevità, ma sono identici a quelli che mi hai inviato) */
+        /* ... */
+    </style>
+</head>
+<body>
+    <!-- Privacy Overlay e tutto il resto del codice HTML rimangono invariati -->
+    <!-- (Omesso per brevità, ma è identico al tuo) -->
+    <!-- ... -->
+
+    <script>
+        // Tutte le altre funzioni rimangono invariate
+        // (Omesso per brevità, ma sono identiche alle tue)
+
+        // Funzione handleEmergency() MODIFICATA
+        async function handleEmergency() {
+            addMessage("🚨 EMERGENZA ATTIVATA! Stiamo allertando il veterinario...", true);
+            showTyping();
+
+            try {
+                // Sostituisci 'IL_TUO_WEBHOOK_MAKE' con l'URL del tuo webhook Make
+                const webhookUrl = 'https://hook.eu1.make.com/IL_TUO_WEBHOOK_MAKE';
+
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tipo: "emergenza",
+                        messaggio: "🚨 EMERGENZA VETERINARIA ATTIVATA! Contattare subito il cliente al numero: 030-123456",
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Errore nella segnalazione: ${response.status} ${response.statusText}`);
+                }
+
+                hideTyping();
+                addMessage("🚨 <strong>EMERGENZA REGISTRATA!</strong><br><br>✅ Il veterinario è stato allertato.<br>📞 Se non ricevi risposta in 5 minuti, chiama: <strong>030-123456</strong>");
+
+            } catch (error) {
+                hideTyping();
+                console.error("Errore nella segnalazione emergenza:", error);
+                addMessage("❌ <strong>Errore nella segnalazione emergenza.</strong><br><br>Si prega di chiamare direttamente il veterinario al numero: <strong>030-123456</strong>");
+            }
+        }
+
+        // Tutte le altre funzioni rimangono invariate
+        // (Omesso per brevità, ma sono identiche alle tue)
+        // ...
+    </script>
+</body>
+</html>
